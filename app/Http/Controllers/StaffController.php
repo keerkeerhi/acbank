@@ -1,10 +1,9 @@
 <?php namespace App\Http\Controllers;
 
-use App\User;
 use Illuminate\Http\Response;
 use Auth;
 
-class WelcomeController extends Controller {
+class StaffController extends Controller {
 
 	/*
 	|--------------------------------------------------------------------------
