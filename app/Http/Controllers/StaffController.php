@@ -1,60 +1,86 @@
 <?php namespace App\Http\Controllers;
 
-use Illuminate\Http\Response;
-use Auth;
+use App\Http\Requests;
+use App\Http\Controllers\Controller;
+
+use Illuminate\Http\Request;
 
 class StaffController extends Controller {
 
-	/*
-	|--------------------------------------------------------------------------
-	| Welcome Controller
-	|--------------------------------------------------------------------------
-	|
-	| This controller renders the "marketing page" for the application and
-	| is configured to only allow guests. Like most of the other sample
-	| controllers, you are free to modify or remove it as you desire.
-	|
-	*/
-
 	/**
-	 * Create a new controller instance.
-	 *
-	 * @return void
-	 */
-	public function __construct()
-	{
-		$this->middleware('guest');
-	}
-
-	/**
-	 * Show the application welcome screen to the user.
+	 * Display a listing of the resource.
 	 *
 	 * @return Response
 	 */
 	public function index()
 	{
-		return 'aaaaa';
+		//
+        $list = DB::select('select *from ac_staff');
+        return \Response::json(array($list));
 	}
 
-    /**
-     * @return mixed 验证登录
-     */
-	public function checkAuth(){
-        return \Response::json(array('ispassed'=>Auth::check()));
-    }
+	/**
+	 * Show the form for creating a new resource.
+	 *
+	 * @return Response
+	 */
+	public function create()
+	{
+		//
+	}
 
-    /**
-     * @return mixed 登录
-     */
-    public function login($loginname,$pwd){
-        $user = BD::select("select *from ac_user where loginname=? and password=?",array($loginname,$pwd));
-        if (count($user)>0)
-        {
-            Auth::login($user);
-            return \Response::json(array('flag'=>true,'info'=>$user));
-        }
-        else
-            return \Response::json(array('flag'=>false,'info'=>"用户名密码有误！"));
-    }
+	/**
+	 * Store a newly created resource in storage.
+	 *
+	 * @return Response
+	 */
+	public function store()
+	{
+		//
+	}
+
+	/**
+	 * Display the specified resource.
+	 *
+	 * @param  int  $id
+	 * @return Response
+	 */
+	public function show($id)
+	{
+		//
+	}
+
+	/**
+	 * Show the form for editing the specified resource.
+	 *
+	 * @param  int  $id
+	 * @return Response
+	 */
+	public function edit($id)
+	{
+		//
+	}
+
+	/**
+	 * Update the specified resource in storage.
+	 *
+	 * @param  int  $id
+	 * @return Response
+	 */
+	public function update($id)
+	{
+		//
+	}
+
+	/**
+	 * Remove the specified resource from storage.
+	 *
+	 * @param  int  $id
+	 * @return Response
+	 */
+	public function destroy($id)
+	{
+		//
+	}
 
 }
