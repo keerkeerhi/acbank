@@ -1,8 +1,6 @@
 <?php namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\Crypt;
-
-class StaffController extends Controller
+class CustomsController extends Controller
 {
 
     /**
@@ -12,9 +10,7 @@ class StaffController extends Controller
      */
     public function index()
     {
-        //
-        $list = DB::select('select *from ac_staff');
-        return \Response::json(array($list));
+
     }
 
     /**
@@ -24,7 +20,7 @@ class StaffController extends Controller
      */
     public function create()
     {
-
+        //
     }
 
     /**
@@ -34,7 +30,7 @@ class StaffController extends Controller
      */
     public function store()
     {
-
+        //
     }
 
     /**
@@ -45,7 +41,8 @@ class StaffController extends Controller
      */
     public function show($id)
     {
-        //
+        $list = DB::select('select *from ac_customers where managerid=?', $id);
+        return \Response::json(array($list));
     }
 
     /**
@@ -68,22 +65,22 @@ class StaffController extends Controller
     public function update($id)
     {
         if (property_exists($id, 'id')) {
-            DB::update('update ac_user set loginname=? and name=? and headimg=? and email=? where id=?',
-                [$id => loginname, $id => name, $id => headimg, $id => email, $id => id]);
+            DB::update('update ac_customers set name=? and phone=? and address=? where id=?',
+                [$id => name, $id => phone, $id => address, $id => id]);
         } else
-            DB::insert('insert into ac_user (loginname,name,headimg,email,password) values (?, ?,?,?,?)',
-                [$id => loginname, $id => name, $id => headimg, $id => email, Crypt::encrypt('123456')]);
+            DB::insert('insert into ac_customers (name,phone,address,managerid) values (?, ?,?,?)',
+                [$id => name, $id => phone, $id => address, $id => managerid]);
     }
 
     /**
      * Remove the specified resource from storage.
-     *   删除员工
+     *
      * @param  int $id
      * @return Response
      */
     public function destroy($id)
     {
-        DB::delete('delete from ac_user where id=?', [$id]);
+        DB::delete('delete from ac_customers where id=?', [$id]);
     }
 
 }

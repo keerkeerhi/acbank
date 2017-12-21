@@ -18,8 +18,9 @@
 Route::post('/checkAuth','WelcomeController@checkAuth');
 Route::post('/login/{username}/{pwd}','WelcomeController@login');
 Route::resource('staff','StaffController');
+Route::resource('customs','CustomsController');
 
-Route::controllers([
-	'auth' => 'Auth\AuthController',
-	'password' => 'Auth\PasswordController',
-]);
+//Route::controllers([
+//	'auth' => 'Auth\AuthController',
+//	'password' => 'Auth\PasswordController',
+//]);
