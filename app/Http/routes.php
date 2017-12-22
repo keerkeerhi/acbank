@@ -16,7 +16,7 @@
 //Route::get('home', 'HomeController@index');
 
 Route::post('/checkAuth','WelcomeController@checkAuth');
-Route::post('/login/{username}/{pwd}','WelcomeController@login');
+Route::post('/login','WelcomeController@login');
 Route::resource('staff','StaffController');
 Route::resource('customs','CustomsController');
 
