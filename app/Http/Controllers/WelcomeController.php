@@ -43,6 +43,7 @@ class WelcomeController extends Controller
      */
     public function checkAuth()
     {
+//        Log::info('basdflasdfasdf');
         $arr = null;
         if (Auth::check())
             $arr = ['ispassed' => true, 'info' => Auth::user()];
