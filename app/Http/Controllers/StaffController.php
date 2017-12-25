@@ -32,9 +32,15 @@ class StaffController extends Controller
      *
      * @return Response
      */
-    public function store()
+    public function store(Request $request)
     {
-
+        $staff = $request::input('staff');
+        if (property_exists($staff, 'id')) {
+            DB::update('update ac_user set loginname=? and name=? and headimg=? and email=? where id=?',
+                [$staff => loginname, $staff => name, $staff => headimg, $staff => email, $staff => id]);
+        } else
+            DB::insert('insert into ac_user (loginname,name,headimg,email,password) values (?, ?,?,?,?)',
+                [$staff => loginname, $staff => name, $staff => headimg, $staff => email, Crypt::encrypt('123456')]);
     }
 
     /**
@@ -67,12 +73,7 @@ class StaffController extends Controller
      */
     public function update($id)
     {
-        if (property_exists($id, 'id')) {
-            DB::update('update ac_user set loginname=? and name=? and headimg=? and email=? where id=?',
-                [$id => loginname, $id => name, $id => headimg, $id => email, $id => id]);
-        } else
-            DB::insert('insert into ac_user (loginname,name,headimg,email,password) values (?, ?,?,?,?)',
-                [$id => loginname, $id => name, $id => headimg, $id => email, Crypt::encrypt('123456')]);
+
     }
 
     /**
