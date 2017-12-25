@@ -1,6 +1,5 @@
 <?php namespace App\Http\Controllers;
 
-use App\User;
 use Auth;
 use Request;
 use DB;
@@ -60,6 +59,8 @@ class WelcomeController extends Controller
         $loginname = $request::input('username');
         $pwd = $request::input('password');
         $user = null;
+        // use Hash
+        // Hash::make($pwd);
         if (Auth::attempt(['loginname' => $loginname, 'password' => $pwd]))
             $user = Auth::user();
 
