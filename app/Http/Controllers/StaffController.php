@@ -1,6 +1,8 @@
 <?php namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\Crypt;
+use Request;
+use DB;
+use Hash;
 
 class StaffController extends Controller
 {
@@ -13,8 +15,8 @@ class StaffController extends Controller
     public function index()
     {
         //
-        $list = DB::select('select *from ac_staff');
-        return \Response::json(array($list));
+        $list = DB::select('select *from ac_user where type=0');
+        return \Response::json($list);
     }
 
     /**
@@ -35,12 +37,24 @@ class StaffController extends Controller
     public function store(Request $request)
     {
         $staff = $request::input('staff');
-        if (property_exists($staff, 'id')) {
-            DB::update('update ac_user set loginname=? and name=? and headimg=? and email=? where id=?',
-                [$staff => loginname, $staff => name, $staff => headimg, $staff => email, $staff => id]);
-        } else
-            DB::insert('insert into ac_user (loginname,name,headimg,email,password) values (?, ?,?,?,?)',
-                [$staff => loginname, $staff => name, $staff => headimg, $staff => email, Crypt::encrypt('123456')]);
+        $res = null;
+        $info = "保存成功！";
+        if (isset($staff['id'])) {
+            $res = DB::update('update ac_user set loginname=? and name=? and headimg=? and email=? where id=?',
+                [$staff['loginName'], $staff['name'], $staff['headimg'], $staff['email'], $staff['id']]);
+        } else {
+            $list = DB::select('select *from ac_user where loginname=? or name=?', [$staff['loginName'], $staff['name']]);
+            if (count($list) > 0) {
+                $res = false;
+                $info = "用户名或姓名已存在！";
+            } else {
+                $res = DB::insert('insert into ac_user (loginname,name,headimg,email,password) values (?, ?,?,?,?)',
+                    [$staff['loginName'], $staff['name'], "", "", Hash::make('123456')]);
+                if (!$res)
+                    $info = "保存失败！";
+            }
+        }
+        return \Response::json(['info' => $info, flag => $res]);
     }
 
     /**
@@ -51,7 +65,8 @@ class StaffController extends Controller
      */
     public function show($id)
     {
-        //
+        $list = DB::select('select *from ac_user where type=0 and id=?',[$id]);
+        return \Response::json($list);
     }
 
     /**
@@ -84,7 +99,11 @@ class StaffController extends Controller
      */
     public function destroy($id)
     {
-        DB::delete('delete from ac_user where id=?', [$id]);
+        $res = DB::delete('delete from ac_user where id=?', [$id]);
+        if ($res)
+            return '1';
+        else
+            return '0';
     }
 
 }

@@ -14,11 +14,13 @@
 //Route::get('/', 'WelcomeController@index');
 
 //Route::get('home', 'HomeController@index');
+error_reporting(E_ALL &~ E_NOTICE);
 
 Route::get('/checkAuth','WelcomeController@checkAuth');
 Route::post('/login','WelcomeController@login');
 Route::resource('staff','StaffController');
 Route::resource('customs','CustomsController');
+Route::resource('dict','DictController');
 
 //Route::controllers([
 //	'auth' => 'Auth\AuthController',

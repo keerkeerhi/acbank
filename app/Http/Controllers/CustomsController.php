@@ -1,5 +1,8 @@
 <?php namespace App\Http\Controllers;
 
+use Request;
+use DB;
+
 class CustomsController extends Controller
 {
 
@@ -25,12 +28,24 @@ class CustomsController extends Controller
 
     /**
      * Store a newly created resource in storage.
-     *
      * @return Response
      */
-    public function store()
+    public function store(Request $request)
     {
-        //
+        $custom = $request::input('custom');
+        $res = null;
+        $info = "保存成功！";
+        $list = DB::select('select *from ac_customers where name=? and managerid=?', [$custom['name'], $custom['managerid']]);
+        if (count($list) > 0) {
+            $res = DB::update('update ac_customers set name=?,phone=?, address=?,numb=? where id=?',
+                [$custom['name'], $custom['phone'], $custom['address'], $custom['numb'], $list[0]->id]);
+        } else {
+            $res = DB::insert('insert into ac_customers (name,phone,address,numb,managerid) values (?, ?,?,?,?)',
+                [$custom['name'], $custom['phone'], $custom['address'], $custom['numb'], $custom['managerid']]);
+        }
+        if (!$res)
+            $info = "保存失败！";
+        return \Response::json(['info' => $info, flag => $res]);
     }
 
     /**
@@ -41,8 +56,8 @@ class CustomsController extends Controller
      */
     public function show($id)
     {
-        $list = DB::select('select *from ac_customers where managerid=?', $id);
-        return \Response::json(array($list));
+        $list = DB::select('select *from ac_customers where managerid=? and isdel=0', [$id]);
+        return \Response::json($list);
     }
 
     /**
@@ -64,23 +79,22 @@ class CustomsController extends Controller
      */
     public function update($id)
     {
-        if (property_exists($id, 'id')) {
-            DB::update('update ac_customers set name=? and phone=? and address=? where id=?',
-                [$id => name, $id => phone, $id => address, $id => id]);
-        } else
-            DB::insert('insert into ac_customers (name,phone,address,managerid) values (?, ?,?,?)',
-                [$id => name, $id => phone, $id => address, $id => managerid]);
+
     }
 
     /**
      * Remove the specified resource from storage.
-     *
+     *  删除客户信息
      * @param  int $id
      * @return Response
      */
     public function destroy($id)
     {
-        DB::delete('delete from ac_customers where id=?', [$id]);
+        $res = DB::update('update ac_customers set isdel=1 where id=?', [$id]);
+        if ($res)
+            return '1';
+        else
+            return '0';
     }
 
 }
