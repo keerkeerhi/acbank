@@ -37,11 +37,26 @@ class StaffController extends Controller
     public function store(Request $request)
     {
         $staff = $request::input('staff');
+        $id = $request::input('id');
+        $phone = $request::input('phone');
+        $headimg = $request::file('headImg');
+        $email = $request::input('email');
         $res = null;
         $info = "保存成功！";
-        if (isset($staff['id'])) {
-            $res = DB::update('update ac_user set loginname=? and name=? and headimg=? and email=? where id=?',
-                [$staff['loginName'], $staff['name'], $staff['headimg'], $staff['email'], $staff['id']]);
+        if (isset($id)) {
+            $path='photos/upload/';
+            if ($request::hasFile('headImg')&&$request::file('headImg')->isValid())
+            {
+                $clientName = $headimg->getClientOriginalExtension();
+                $clientName = time().md5('picture').'.'.$clientName;
+                $headimg->move($path,$clientName);
+                $imgurl =  'http://'.$_SERVER['HTTP_HOST'].'/public/'.$path.$clientName;
+            }
+            else
+                $imgurl = '';
+            $res = DB::update('update ac_user set headimg=?,email=?,phone=? where id=?',
+                [$imgurl, $email, $phone, $id]);
+            $info = $imgurl;
         } else {
             $list = DB::select('select *from ac_user where loginname=? or name=?', [$staff['loginName'], $staff['name']]);
             if (count($list) > 0) {

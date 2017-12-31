@@ -46,7 +46,9 @@ class DictController extends Controller {
 	 */
 	public function show($id)
 	{
-		//
+        //
+        $list = DB::select('select *from ac_dic where type=? ORDER BY -code DESC ',[$id]);
+        return \Response::json($list);
 	}
 
 	/**
