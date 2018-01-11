@@ -3,6 +3,7 @@
 use Request;
 use DB;
 use Hash;
+use Auth;
 
 class StaffController extends Controller
 {
@@ -44,15 +45,13 @@ class StaffController extends Controller
         $res = null;
         $info = "保存成功！";
         if (isset($id)) {
-            $path='photos/upload/';
-            if ($request::hasFile('headImg')&&$request::file('headImg')->isValid())
-            {
+            $path = 'photos/upload/';
+            if ($request::hasFile('headImg') && $request::file('headImg')->isValid()) {
                 $clientName = $headimg->getClientOriginalExtension();
-                $clientName = time().md5('picture').'.'.$clientName;
-                $headimg->move($path,$clientName);
-                $imgurl =  'http://'.$_SERVER['HTTP_HOST'].'/public/'.$path.$clientName;
-            }
-            else
+                $clientName = time() . md5('picture') . '.' . $clientName;
+                $headimg->move($path, $clientName);
+                $imgurl = 'http://' . $_SERVER['HTTP_HOST'] . '/public/' . $path . $clientName;
+            } else
                 $imgurl = '';
             $res = DB::update('update ac_user set headimg=?,email=?,phone=? where id=?',
                 [$imgurl, $email, $phone, $id]);
@@ -80,7 +79,7 @@ class StaffController extends Controller
      */
     public function show($id)
     {
-        $list = DB::select('select *from ac_user where type=0 and id=?',[$id]);
+        $list = DB::select('select *from ac_user where type=0 and id=?', [$id]);
         return \Response::json($list);
     }
 
@@ -101,9 +100,16 @@ class StaffController extends Controller
      * @param  int $id
      * @return Response
      */
-    public function update($id)
+    public function update(Request $request, $id)
     {
-
+        $info = $request::input('info');
+        $list = DB::select('select *from ac_user where id=?', [$id]);
+        $staff = $list[0];
+        $res = 0;
+        if (Auth::validate(['loginname' => $staff->loginname, 'password' => $info['oldPwd']])) {
+            $res = DB::update('update ac_user set password=? where id=?', [Hash::make($info['newPwd']), $id]);
+        }
+        return $res;
     }
 
     /**
